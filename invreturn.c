@@ -1,6 +1,8 @@
 #include <ncurses.h>
 #include <stdlib.h>
-#include "intresttools.h"
+#include "interesttools.h"
+
+
 
 struct investment{	//The investment struct
 	double invest;
@@ -11,11 +13,10 @@ struct investment{	//The investment struct
 
 
 
-
-//Two Investments
+//Two Investments		Note that this will have few comments; see 'oneintrest' function below.
 int twointerest(){
 
-	//Calling Data-Collecting Variables
+	
 	double invest,rate,period,weekfloat;
 	int weekinteger,weekcounter;
 	weekinteger = 1;
@@ -23,78 +24,89 @@ int twointerest(){
 	struct investment *inv1 = malloc(sizeof(*inv1));
 	struct investment *inv2 = malloc(sizeof(*inv2));
 
-	//Preparing the Data-Collecting Windows
+	
 	initscr();
+	echo();
 	int yMax,xMax;
 	getmaxyx(stdscr, yMax, xMax);
-	WINDOW * investwindow = newwin(4,xMax-12,yMax-36,6); WINDOW * ratewindow = newwin(4,xMax-12,yMax-32,6);
-	WINDOW * periodwindow = newwin(5,xMax-12,yMax-28,6);
+
+	WINDOW * investwindow = newwin(4,72,0,0); WINDOW * ratewindow = newwin(4,72,4,0);
+	WINDOW * periodwindow = newwin(5,72,8,0);
+
+	init_pair(1,COLOR_CYAN,COLOR_CYAN);
+	init_pair(2,COLOR_BLACK,COLOR_WHITE);
+
+	wbkgd(stdscr, COLOR_PAIR(1));
+	wattron(investwindow,COLOR_PAIR(2)); wbkgd(investwindow,COLOR_PAIR(2));
+	wattron(ratewindow,COLOR_PAIR(2)); wbkgd(ratewindow,COLOR_PAIR(2));
+	wattron(periodwindow,COLOR_PAIR(2)); wbkgd(periodwindow,COLOR_PAIR(2));
+
 	box(investwindow,0,0); box(ratewindow,0,0); box(periodwindow,0,0);
-	
-	//Window Refreshing
+
+	mvwprintw(investwindow,1,1,"Investment 1:		Investment 2:");
+	mvwprintw(ratewindow,1,1,"Rate Percent 1:	Rate Percent 2:");
+	mvwprintw(periodwindow,1,1,"Annual = 52, Semiannual = 26, Quarterly = 13, Monthly = 4.3");
+
+	mvwprintw(periodwindow,2,1,"Weeks in Period 1:	Weeks in Period 2:");
 	refresh();
 	wrefresh(investwindow); wrefresh(ratewindow); wrefresh(periodwindow);
 
-	//Printing the informational windows, and collecting our first investment info.
-	mvwprintw(investwindow,1,1,"Investment 1:	Investment 2:");
+
 	mvwscanw(investwindow,2,1,"%lf",&invest);
-	mvwprintw(ratewindow,1,1,"Rate Percent 1:	Rate Percent 2:");
 	mvwscanw(ratewindow,2,1,"%lf",&rate);
-	mvwprintw(periodwindow,1,1,"Annual = 52, Semiannual = 26, Quarterly = 13, Monthly = 4.3");
-	mvwprintw(periodwindow,2,1,"Weeks in Period 1:	Weeks in Period 2:");
 	mvwscanw(periodwindow,3,1,"%lf",&period);
 
-	//Translating the Variables for the First Investment
 	inv1->invest = invest;
-	inv1->rate = (rate + 100) / 100;	//Convert the rate from a percent into a decimal for calculation.
+	inv1->rate = (rate + 100) / 100;
 	inv1->period = period;
 	
-	//Collecting Second Investment Info
-	mvwscanw(investwindow,2,16,"		%lf",&invest);
+	mvwscanw(investwindow,2,24,"		%lf",&invest);
 	mvwscanw(ratewindow,2,24,"		%lf",&rate);
 	mvwscanw(periodwindow,3,24,"		%lf",&period);
 
-	//Translating the Variables for the Second Investment
 	inv2->invest = invest;
-	inv2->rate = (rate + 100) / 100;	//Convert the rate from a percent into a decimal for calculation.
+	inv2->rate = (rate + 100) / 100;
 	inv2->period = period;
 
-	//Clear && NoEcho && Refresh
+	
 	clear();
 	noecho();
 	refresh();
 
-	//Preparing the Table of Values
-	WINDOW * calcwindowa = newwin(36,xMax/2,yMax-36,12);
-	WINDOW * calcwindowb = newwin(6,12,0,0);
+	WINDOW * calcwindowa = newwin(36,72,0,14);
+	WINDOW * calcwindowb = newwin(6,14,0,0);
+
+	wattron(calcwindowa,COLOR_PAIR(2)); wbkgd(calcwindowa,COLOR_PAIR(2));
+	wattron(calcwindowb,COLOR_PAIR(2)); wbkgd(calcwindowb,COLOR_PAIR(2));
+
 	box(calcwindowa,0,0); box(calcwindowb,0,0);
+
 	keypad(calcwindowb,true);
 
-	//Page System Initialization
-	int currentpage = 1;			//The current page. 
-	int choice = 0;				//Used to select pages.
+	int currentpage = 1; 
+	int choice = 0;
 
-	//Getting our windows ready
+	mvwprintw(calcwindowb,1,2,"Use the UP");
+	mvwprintw(calcwindowb,2,2,"and DOWN");
+	mvwprintw(calcwindowb,3,2,"arrow keys");
+	mvwprintw(calcwindowb,4,2,"to scroll");
 	wrefresh(calcwindowa); wrefresh(calcwindowb);
-	mvwprintw(calcwindowb,1,1,"Use the UP\nand DOWN\narrow keys\nto scroll");
 
-	//Calculation Loop
+
 	while(1){
 
-
-		int weekshift = 0;								//Shifts the text down the Y axis
-		weekinteger = 1 + (33 * (currentpage - 1));					//Defines what 'x' value we'll start at.
-		weekfloat = weekinteger;							//Same here.
-		wclear(calcwindowa);								//Used to clear out previous page data.
-		mvwprintw(calcwindowa,weekinteger,1,"Week 0:		%lf	%lf",inv1->invest,inv2->invest);
-		//Above is supposed to be printed consistently at top; but it doesn't work for now.
-		box(calcwindowa,0,0);								//Nessicary to get the box back.
-
+		int weekshift = 0;
+		weekinteger = 1 + (33 * (currentpage - 1));
+		weekfloat = weekinteger;
+		wclear(calcwindowa);
+		box(calcwindowa,0,0);
+		mvwprintw(calcwindowa,1,1,"Week 0:		%lf	%lf",inv1->invest,inv2->invest);
+		wrefresh(calcwindowa);
 
 		for(int pageinteger = 33 * currentpage; pageinteger != 0 + (33 * (currentpage - 1)); pageinteger--)
 		{
-			inv1->returns = intrestcalc(inv1->invest,inv1->rate,inv1->period,weekfloat);
-			inv2->returns = intrestcalc(inv2->invest,inv2->rate,inv2->period,weekfloat);
+			inv1->returns = interestcalc(inv1->invest,inv1->rate,inv1->period,weekfloat);
+			inv2->returns = interestcalc(inv2->invest,inv2->rate,inv2->period,weekfloat);
 			mvwprintw(calcwindowa,weekshift+2,1,"Week %d:		%lf	%lf",weekinteger,inv1->returns,inv2->returns);
 			weekinteger++; weekshift++;;
 			weekfloat = weekinteger;
@@ -120,8 +132,8 @@ int twointerest(){
 			break;
 	}
 
+
 	endwin();
-	return 0;
 	return 0;
 }
 
@@ -139,22 +151,37 @@ int oneinterest(){
 
 	//Preparing the Data-Collecting Windows
 	initscr();
+	echo();
 	int yMax,xMax;
 	getmaxyx(stdscr, yMax, xMax);
-	WINDOW * investwindow = newwin(4,xMax-12,yMax-36,6); WINDOW * ratewindow = newwin(4,xMax-12,yMax-32,6);
-	WINDOW * periodwindow = newwin(5,xMax-12,yMax-28,6);
-	box(investwindow,0,0); box(ratewindow,0,0); box(periodwindow,0,0);
+	WINDOW * investwindow = newwin(4,72,0,0); WINDOW * ratewindow = newwin(4,72,4,0);
+	WINDOW * periodwindow = newwin(5,72,8,0);
 
+	init_pair(1,COLOR_CYAN,COLOR_CYAN);		//Color-pair 1 is just a background of Cyan.
+	init_pair(2,COLOR_BLACK,COLOR_WHITE);		//Color-pair 2 is a nice combo of Black and White (Grey)
+
+	wbkgd(stdscr, COLOR_PAIR(1));
+	wattron(investwindow,COLOR_PAIR(2)); wbkgd(investwindow,COLOR_PAIR(2));
+	wattron(ratewindow,COLOR_PAIR(2)); wbkgd(ratewindow,COLOR_PAIR(2));
+	wattron(periodwindow,COLOR_PAIR(2)); wbkgd(periodwindow,COLOR_PAIR(2));
+
+	box(investwindow,0,0); box(ratewindow,0,0); box(periodwindow,0,0);
 	
+	//Printing in the Windows
+	mvwprintw(investwindow,1,1,"Investment:");
+	mvwprintw(ratewindow,1,1,"Rate Percent:");
+	mvwprintw(periodwindow,1,1,"Annual = 52, Semiannual = 26, Quarterly = 13, Monthly = 4.3");
+	mvwprintw(periodwindow,2,1,"Weeks in Period:");
+
 	//Window Refreshing
 	refresh();
 	wrefresh(investwindow); wrefresh(ratewindow); wrefresh(periodwindow);
 
+
 	//Getting the important information relating to the investment.
-	mvwprintw(investwindow,1,1,"Investment:"); mvwscanw(investwindow,2,1,"%lf",&invest);
-	mvwprintw(ratewindow,1,1,"Rate Percent:"); mvwscanw(ratewindow,2,1,"%lf",&rate);
-	mvwprintw(periodwindow,1,1,"Annual = 52, Semiannual = 26, Quarterly = 13, Monthly = 4.3");
-	mvwprintw(periodwindow,2,1,"Weeks in Period:"); mvwscanw(periodwindow,3,1,"%lf",&period);
+	mvwscanw(investwindow,2,1,"%lf",&invest);
+	mvwscanw(ratewindow,2,1,"%lf",&rate);
+	mvwscanw(periodwindow,3,1,"%lf",&period);
 
 	//Calculating the Variables
 	inv1->invest = invest;
@@ -166,9 +193,14 @@ int oneinterest(){
 	noecho();
 	refresh();
 
+
 	//Preparing the Table of Values
-	WINDOW * calcwindowa = newwin(36,xMax/2,yMax-36,12);
-	WINDOW * calcwindowb = newwin(6,12,0,0);
+	WINDOW * calcwindowa = newwin(36,72,0,14);
+	WINDOW * calcwindowb = newwin(6,14,0,0);
+
+	wattron(calcwindowa,COLOR_PAIR(2)); wbkgd(calcwindowa,COLOR_PAIR(2));
+	wattron(calcwindowb,COLOR_PAIR(2)); wbkgd(calcwindowb,COLOR_PAIR(2));
+	
 	box(calcwindowa,0,0); box(calcwindowb,0,0);
 	keypad(calcwindowb,true);
 
@@ -178,48 +210,51 @@ int oneinterest(){
 
 	//Getting our windows ready
 	wrefresh(calcwindowa); wrefresh(calcwindowb);
-	mvwprintw(calcwindowb,1,1,"Use the UP\nand DOWN\narrow keys\nto scroll");
+	mvwprintw(calcwindowb,1,2,"Use the UP");
+	mvwprintw(calcwindowb,2,2,"and DOWN");
+	mvwprintw(calcwindowb,3,2,"arrow keys");
+	mvwprintw(calcwindowb,4,2,"to scroll");
+
 
 	//Calculation Loop
 	while(1){
 
 		int weekshift = 0;								//Shifts the text down the Y axis
-		weekinteger = 1 + (33 * (currentpage - 1));					//Defines what 'x' value we'll start at.
+		weekinteger = 1 + (33 * (currentpage - 1));					//Defines what 'y' value we'll start at.
 		weekfloat = weekinteger;							//Same here.
 		wclear(calcwindowa);								//Used to clear out previous page data.
-		mvwprintw(calcwindowa,weekinteger,1,"Week 0:		%lf",inv1->invest);	//Printed consistantly at top.
 		box(calcwindowa,0,0);								//Nessicary to get the box back.
+		mvwprintw(calcwindowa,1,1,"Week 0:		%lf",inv1->invest);		//Printed consistantly at top.
 
 		for(int pageinteger = 33 * currentpage; pageinteger != 0 + (33 * (currentpage - 1)); pageinteger--)
 		{
-			inv1->returns = intrestcalc(inv1->invest,inv1->rate,inv1->period,weekfloat);
+			inv1->returns = interestcalc(inv1->invest,inv1->rate,inv1->period,weekfloat);
 			mvwprintw(calcwindowa,weekshift+2,1,"Week %d:		%lf",weekinteger,inv1->returns);
 			weekinteger++; weekshift++;;
 			weekfloat = weekinteger;
 			wrefresh(calcwindowa);
 		}
 		
-		choice = wgetch(calcwindowb);
 
+		choice = wgetch(calcwindowb);
 		switch(choice)
 		{
-			case KEY_UP:
-				if(currentpage == 1)
-					break;
-				currentpage--;
+			case KEY_UP:				//Up Arrow Key is pressed
+				if(currentpage == 1)		//If we're at the first page...
+					break;			//Then don't bother.
+				currentpage--;			//Otherwise; go up a page by lowering our page value.
 				break;
-			case KEY_DOWN:
-				currentpage++;
+			case KEY_DOWN:				//Down Arrow Key is pressed
+				currentpage++;			//Go down a page by raising our page value.
 				break;
 			default:
 				break;
 		}
-		if(choice == 10)
-			break;
+		if(choice == 10)				//If we press the enter key,
+			break;					//Then exit.
 	}
 
-	getch();
-	endwin();
+	endwin();						//And terminate the program.
 	return 0;
 }
 
@@ -227,35 +262,67 @@ int oneinterest(){
 
 //Main
 int main(){
+
 	initscr();
 	cbreak();
+	noecho();
+	start_color();
 
+
+	//Error Check
 	int yMax,xMax;
-	getmaxyx(stdscr, yMax, xMax);
+	getmaxyx(stdscr, yMax, xMax);		//Program needs at least 36 y-axis units and 72 x-axis units.
+	if(yMax < 36 || xMax < 86){		//If window cannot meet those requirements it stops and prints an error code.
+		endwin();
+		printf("Error!\nError Code:		01\nWindow Dimensions too small!");
+		printf("yMax = %d			xMax = %d",yMax,xMax);
+		printf("yMax must be at least 36.	xMax must be at least 86.");
+		return 1;
+	}
 
-	WINDOW * titlewin = newwin(4, xMax-12, yMax-16, 6);
-	WINDOW * choicewin = newwin(5, xMax-12, yMax-8, 6);
-	box(titlewin, 0, 0); box(choicewin, 0, 0);
+	
+	//Initializing the screen.
+	WINDOW * titlewin = newwin(4,72, 0, 0);
+	WINDOW * choicewin = newwin(5,72, 5, 0);
+	WINDOW * infowin = newwin(5,72, 11, 0);
 
-	mvwprintw(titlewin, 1, 1, "ACT's Investment-Return Calculator\n Version 2.0");
-	mvwprintw(choicewin, 1, 1, "1 or 2 investments?\n");
-	refresh(); wrefresh(titlewin); wrefresh(choicewin);
+	init_pair(1,COLOR_CYAN,COLOR_CYAN);		//Color-pair 1 is just a background of Cyan.
+	init_pair(2,COLOR_BLACK,COLOR_WHITE);		//Color-pair 2 is a nice combo of Black and White (Grey)
+
+	wbkgd(stdscr, COLOR_PAIR(1));
+	wattron(titlewin,COLOR_PAIR(2)); wbkgd(titlewin,COLOR_PAIR(2));
+	wattron(choicewin,COLOR_PAIR(2)); wbkgd(choicewin,COLOR_PAIR(2));
+	wattron(infowin,COLOR_PAIR(2)); wbkgd(infowin,COLOR_PAIR(2));
+
+	box(titlewin, 0, 0); box(choicewin, 0, 0); box(infowin, 0, 0);
+	
+	mvwprintw(titlewin, 1, 2, "ACT's Investment-Return Calculator");
+	mvwprintw(titlewin, 2, 15, "Version 2.1");
+	mvwprintw(choicewin, 1, 2, "1 or 2 investments?");
+	mvwprintw(infowin, 1, 2, "Copyright 2022 ACT");
+	mvwprintw(infowin, 2, 2, "Licensed under the GNU GPL 3.0");
+	mvwprintw(infowin, 3, 2, "https://github.com/act17/invreturn");
+
+	refresh(); wrefresh(titlewin); wrefresh(choicewin); wrefresh(infowin);
 	keypad(choicewin, true);
+	
 
 	int choice;
 	int highlight = 1;
 
+
+	//Selection Menu
 	while(1){
 
 		for(int i = 1; i < 3; i++){
 			if(i == highlight)
 				wattron(choicewin, A_REVERSE);
-			mvwprintw(choicewin, i+1, 1, "%d", i);
+			mvwprintw(choicewin, i+1, 10, "%d", i);
 			wattroff(choicewin, A_REVERSE);
 		}
 
-		choice = wgetch(choicewin);
 
+		choice = wgetch(choicewin);
 		switch(choice)
 		{
 			case KEY_UP:
@@ -271,12 +338,17 @@ int main(){
 			default:
 				break;
 		}
+
+
 		if(choice == 10)
 			break;
 	}
 	
+
+	//Opening the functions to calculate one or two interests
 	clear();
 	endwin();
+
 	if(highlight == 1)
 		oneinterest();
 	if(highlight == 2)
