@@ -30,8 +30,8 @@ int twointerest(){
 	int yMax,xMax;
 	getmaxyx(stdscr, yMax, xMax);
 
-	WINDOW * investwindow = newwin(4,72,0,0); WINDOW * ratewindow = newwin(4,72,4,0);
-	WINDOW * periodwindow = newwin(5,72,8,0);
+	WINDOW * investwindow = newwin(4,86,0,0); WINDOW * ratewindow = newwin(4,86,4,0);
+	WINDOW * periodwindow = newwin(5,86,8,0);
 
 	init_pair(1,COLOR_CYAN,COLOR_CYAN);
 	init_pair(2,COLOR_BLACK,COLOR_WHITE);
@@ -75,6 +75,7 @@ int twointerest(){
 
 	WINDOW * calcwindowa = newwin(36,72,0,14);
 	WINDOW * calcwindowb = newwin(6,14,0,0);
+	WINDOW * calcwindowc = newwin(3,14,256,0);
 
 	wattron(calcwindowa,COLOR_PAIR(2)); wbkgd(calcwindowa,COLOR_PAIR(2));
 	wattron(calcwindowb,COLOR_PAIR(2)); wbkgd(calcwindowb,COLOR_PAIR(2));
@@ -105,11 +106,38 @@ int twointerest(){
 
 		for(int pageinteger = 33 * currentpage; pageinteger != 0 + (33 * (currentpage - 1)); pageinteger--)
 		{
+
+
+			if(weekinteger % 52 == 0){
+				int yearcount = weekfloat / 52;
+
+				if(weekshift > 5)
+					mvwin(calcwindowc,weekshift + 1,0);
+				else
+					mvwin(calcwindowc,6,0);
+				box(calcwindowc,0,0);
+
+				wattron(calcwindowc,COLOR_PAIR(2));
+				wbkgd(calcwindowc,COLOR_PAIR(2));
+
+				if(weekinteger == 52)
+					mvwprintw(calcwindowc,1,1,"1 Year");
+				else
+					mvwprintw(calcwindowc,1,1,"%d Years",yearcount);
+
+				wattron(calcwindowa,A_REVERSE);
+				wrefresh(calcwindowc);
+				wbkgd(calcwindowc,COLOR_PAIR(1));
+				wclear(calcwindowc);
+			}
+
+
 			inv1->returns = interestcalc(inv1->invest,inv1->rate,inv1->period,weekfloat);
 			inv2->returns = interestcalc(inv2->invest,inv2->rate,inv2->period,weekfloat);
 			mvwprintw(calcwindowa,weekshift+2,1,"Week %d:		%lf	%lf",weekinteger,inv1->returns,inv2->returns);
 			weekinteger++; weekshift++;;
 			weekfloat = weekinteger;
+			wattroff(calcwindowa,A_REVERSE);
 			wrefresh(calcwindowa);
 		}
 		
@@ -128,6 +156,7 @@ int twointerest(){
 			default:
 				break;
 		}
+		wrefresh(calcwindowc);
 		if(choice == 10)
 			break;
 	}
@@ -154,8 +183,8 @@ int oneinterest(){
 	echo();
 	int yMax,xMax;
 	getmaxyx(stdscr, yMax, xMax);
-	WINDOW * investwindow = newwin(4,72,0,0); WINDOW * ratewindow = newwin(4,72,4,0);
-	WINDOW * periodwindow = newwin(5,72,8,0);
+	WINDOW * investwindow = newwin(4,86,0,0); WINDOW * ratewindow = newwin(4,86,4,0);
+	WINDOW * periodwindow = newwin(5,86,8,0);
 
 	init_pair(1,COLOR_CYAN,COLOR_CYAN);		//Color-pair 1 is just a background of Cyan.
 	init_pair(2,COLOR_BLACK,COLOR_WHITE);		//Color-pair 2 is a nice combo of Black and White (Grey)
@@ -197,7 +226,8 @@ int oneinterest(){
 	//Preparing the Table of Values
 	WINDOW * calcwindowa = newwin(36,72,0,14);
 	WINDOW * calcwindowb = newwin(6,14,0,0);
-
+	WINDOW * calcwindowc = newwin(3,14,256,0);
+	
 	wattron(calcwindowa,COLOR_PAIR(2)); wbkgd(calcwindowa,COLOR_PAIR(2));
 	wattron(calcwindowb,COLOR_PAIR(2)); wbkgd(calcwindowb,COLOR_PAIR(2));
 	
@@ -228,15 +258,44 @@ int oneinterest(){
 
 		for(int pageinteger = 33 * currentpage; pageinteger != 0 + (33 * (currentpage - 1)); pageinteger--)
 		{
+
+
+			//Year notification system
+			if(weekinteger % 52 == 0){						//If our Week # is a multiple of 52...
+				int yearcount = weekfloat / 52;					//Our year is the Week # divided by 52.
+
+				if(weekshift > 5)						//If the window won't overlap calcwindowb,
+					mvwin(calcwindowc,weekshift + 1,0);			//We take this window and shift it into
+												//place.
+				else								//Otherwise we move the window to the
+					mvwin(calcwindowc,6,0);					//'default' position.
+				box(calcwindowc,0,0);						
+
+				wattron(calcwindowc,COLOR_PAIR(2));				//After making the window a box, we fill
+				wbkgd(calcwindowc,COLOR_PAIR(2));				//it with color.
+
+				if(weekinteger == 52)						//If it's just one year, then we use the
+					mvwprintw(calcwindowc,1,1,"1 Year");			//singular 'year'.
+				else
+					mvwprintw(calcwindowc,1,1,"%d Years",yearcount);	//Otherwise, we use the multiple 'years'.
+
+				wattron(calcwindowa,A_REVERSE);					//Tell calcwindowa to print the next calc
+				wrefresh(calcwindowc);						//with the 'A_REVERSE' attribute.
+				wbkgd(calcwindowc,COLOR_PAIR(1));				//Clear the window's colors,
+				wclear(calcwindowc);						//Then we wait to delete the window.
+			}
+
+
 			inv1->returns = interestcalc(inv1->invest,inv1->rate,inv1->period,weekfloat);
 			mvwprintw(calcwindowa,weekshift+2,1,"Week %d:		%lf",weekinteger,inv1->returns);
+			wattroff(calcwindowa,A_REVERSE);
 			weekinteger++; weekshift++;;
 			weekfloat = weekinteger;
-			wrefresh(calcwindowa);
 		}
 		
-
+		wrefresh(calcwindowa);
 		choice = wgetch(calcwindowb);
+
 		switch(choice)
 		{
 			case KEY_UP:				//Up Arrow Key is pressed
@@ -250,6 +309,7 @@ int oneinterest(){
 			default:
 				break;
 		}
+		wrefresh(calcwindowc);				//Deletes the window, see above.
 		if(choice == 10)				//If we press the enter key,
 			break;					//Then exit.
 	}
@@ -274,17 +334,17 @@ int main(){
 	getmaxyx(stdscr, yMax, xMax);		//Program needs at least 36 y-axis units and 72 x-axis units.
 	if(yMax < 36 || xMax < 86){		//If window cannot meet those requirements it stops and prints an error code.
 		endwin();
-		printf("Error!\nError Code:		01\nWindow Dimensions too small!");
-		printf("yMax = %d			xMax = %d",yMax,xMax);
-		printf("yMax must be at least 36.	xMax must be at least 86.");
+		printf("\nError!\nError Code:		01\nWindow Dimensions too small!");
+		printf("\nyMax = %d			xMax = %d",yMax,xMax);
+		printf("\nyMax must be at least 36.	xMax must be at least 86.");
 		return 1;
 	}
 
 	
 	//Initializing the screen.
-	WINDOW * titlewin = newwin(4,72, 0, 0);
-	WINDOW * choicewin = newwin(5,72, 5, 0);
-	WINDOW * infowin = newwin(5,72, 11, 0);
+	WINDOW * titlewin = newwin(4,86, 0, 0);
+	WINDOW * choicewin = newwin(5,86, 5, 0);
+	WINDOW * infowin = newwin(5,86, 11, 0);
 
 	init_pair(1,COLOR_CYAN,COLOR_CYAN);		//Color-pair 1 is just a background of Cyan.
 	init_pair(2,COLOR_BLACK,COLOR_WHITE);		//Color-pair 2 is a nice combo of Black and White (Grey)
@@ -297,7 +357,7 @@ int main(){
 	box(titlewin, 0, 0); box(choicewin, 0, 0); box(infowin, 0, 0);
 	
 	mvwprintw(titlewin, 1, 2, "ACT's Investment-Return Calculator");
-	mvwprintw(titlewin, 2, 15, "Version 2.1");
+	mvwprintw(titlewin, 2, 15, "Version 2.2");
 	mvwprintw(choicewin, 1, 2, "1 or 2 investments?");
 	mvwprintw(infowin, 1, 2, "Copyright 2022 ACT");
 	mvwprintw(infowin, 2, 2, "Licensed under the GNU GPL 3.0");
