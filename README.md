@@ -11,6 +11,9 @@ This program uses NCurses. The "Main Menu" screen will ask if you want to calcul
 Special thanks to users ``b-fuze (Mike32)`` and ``Xen`` on the Ubuntu Hideout Discord server for helping me fix all the bugs, from SegFaults to issues with Pointers. Further thanks to ``DWD (Daniel) - The Danfather``, also from the Ubuntu Hideout server, for assisting with the additions of color to the program.
 
 # Updates
+_Version 2.2.1_ (April 24th, 2022)
+- Fixed year-highlight algorithim through simplification, placement of the window that displays the years passed is now in a fixed position.
+
 _Version 2.2_ (April 23rd, 2022)
 - Added a feature that highlights when a year has passed, will state how many years have passed in the calculations.
 
