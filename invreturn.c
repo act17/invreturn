@@ -75,24 +75,25 @@ int twointerest(){
 
 	WINDOW * calcwindowa = newwin(36,72,0,14);
 	WINDOW * calcwindowb = newwin(6,14,0,0);
-	WINDOW * calcwindowc = newwin(3,14,256,0);
+	WINDOW * calcwindowc = newwin(3,14,6,0);
 
 	wattron(calcwindowa,COLOR_PAIR(2)); wbkgd(calcwindowa,COLOR_PAIR(2));
 	wattron(calcwindowb,COLOR_PAIR(2)); wbkgd(calcwindowb,COLOR_PAIR(2));
-
-	box(calcwindowa,0,0); box(calcwindowb,0,0);
+	wattron(calcwindowc,COLOR_PAIR(2)); wbkgd(calcwindowc,COLOR_PAIR(2));
+	box(calcwindowa,0,0); box(calcwindowb,0,0); box(calcwindowc,0,0);
 
 	keypad(calcwindowb,true);
 
 	int currentpage = 1; 
 	int choice = 0;
+	int yearcount;
 
 	mvwprintw(calcwindowb,1,2,"Use the UP");
 	mvwprintw(calcwindowb,2,2,"and DOWN");
 	mvwprintw(calcwindowb,3,2,"arrow keys");
 	mvwprintw(calcwindowb,4,2,"to scroll");
-	wrefresh(calcwindowa); wrefresh(calcwindowb);
-
+	mvwprintw(calcwindowc,1,1,"Year: 1");
+	wrefresh(calcwindowa); wrefresh(calcwindowb); wrefresh(calcwindowc);
 
 	while(1){
 
@@ -109,26 +110,10 @@ int twointerest(){
 
 
 			if(weekinteger % 52 == 0){
-				int yearcount = weekfloat / 52;
-
-				if(weekshift > 5)
-					mvwin(calcwindowc,weekshift + 1,0);
-				else
-					mvwin(calcwindowc,6,0);
-				box(calcwindowc,0,0);
-
-				wattron(calcwindowc,COLOR_PAIR(2));
-				wbkgd(calcwindowc,COLOR_PAIR(2));
-
-				if(weekinteger == 52)
-					mvwprintw(calcwindowc,1,1,"1 Year");
-				else
-					mvwprintw(calcwindowc,1,1,"%d Years",yearcount);
-
+				yearcount = weekfloat / 52;
+				mvwprintw(calcwindowc,1,7,"%d",yearcount);
 				wattron(calcwindowa,A_REVERSE);
 				wrefresh(calcwindowc);
-				wbkgd(calcwindowc,COLOR_PAIR(1));
-				wclear(calcwindowc);
 			}
 
 
@@ -156,7 +141,6 @@ int twointerest(){
 			default:
 				break;
 		}
-		wrefresh(calcwindowc);
 		if(choice == 10)
 			break;
 	}
@@ -226,25 +210,26 @@ int oneinterest(){
 	//Preparing the Table of Values
 	WINDOW * calcwindowa = newwin(36,72,0,14);
 	WINDOW * calcwindowb = newwin(6,14,0,0);
-	WINDOW * calcwindowc = newwin(3,14,256,0);
+	WINDOW * calcwindowc = newwin(3,14,6,0);
 	
 	wattron(calcwindowa,COLOR_PAIR(2)); wbkgd(calcwindowa,COLOR_PAIR(2));
 	wattron(calcwindowb,COLOR_PAIR(2)); wbkgd(calcwindowb,COLOR_PAIR(2));
-	
-	box(calcwindowa,0,0); box(calcwindowb,0,0);
+	wattron(calcwindowc,COLOR_PAIR(2)); wbkgd(calcwindowc,COLOR_PAIR(2));
+	box(calcwindowa,0,0); box(calcwindowb,0,0); box(calcwindowc,0,0);						
 	keypad(calcwindowb,true);
 
 	//Page System Initialization
 	int currentpage = 1;			//The current page. 
 	int choice = 0;				//Used to select pages.
+	int yearcount = 1;
 
 	//Getting our windows ready
-	wrefresh(calcwindowa); wrefresh(calcwindowb);
 	mvwprintw(calcwindowb,1,2,"Use the UP");
 	mvwprintw(calcwindowb,2,2,"and DOWN");
 	mvwprintw(calcwindowb,3,2,"arrow keys");
 	mvwprintw(calcwindowb,4,2,"to scroll");
-
+	mvwprintw(calcwindowc,1,1,"Year: 1");
+	wrefresh(calcwindowa); wrefresh(calcwindowb); wrefresh(calcwindowc);
 
 	//Calculation Loop
 	while(1){
@@ -261,28 +246,11 @@ int oneinterest(){
 
 
 			//Year notification system
-			if(weekinteger % 52 == 0){						//If our Week # is a multiple of 52...
-				int yearcount = weekfloat / 52;					//Our year is the Week # divided by 52.
-
-				if(weekshift > 5)						//If the window won't overlap calcwindowb,
-					mvwin(calcwindowc,weekshift + 1,0);			//We take this window and shift it into
-												//place.
-				else								//Otherwise we move the window to the
-					mvwin(calcwindowc,6,0);					//'default' position.
-				box(calcwindowc,0,0);						
-
-				wattron(calcwindowc,COLOR_PAIR(2));				//After making the window a box, we fill
-				wbkgd(calcwindowc,COLOR_PAIR(2));				//it with color.
-
-				if(weekinteger == 52)						//If it's just one year, then we use the
-					mvwprintw(calcwindowc,1,1,"1 Year");			//singular 'year'.
-				else
-					mvwprintw(calcwindowc,1,1,"%d Years",yearcount);	//Otherwise, we use the multiple 'years'.
-
-				wattron(calcwindowa,A_REVERSE);					//Tell calcwindowa to print the next calc
-				wrefresh(calcwindowc);						//with the 'A_REVERSE' attribute.
-				wbkgd(calcwindowc,COLOR_PAIR(1));				//Clear the window's colors,
-				wclear(calcwindowc);						//Then we wait to delete the window.
+			if(weekinteger % 52 == 0){				//If our Week # is a multiple of 52...
+				yearcount = weekfloat / 52;			//We define our Year #.
+				mvwprintw(calcwindowc,1,7,"%d",yearcount);	//Print the new Year #, then we tell
+				wattron(calcwindowa,A_REVERSE);			//calcwindowa to print the next calc
+				wrefresh(calcwindowc);				//with the A_REVERSE attr.
 			}
 
 
@@ -293,7 +261,7 @@ int oneinterest(){
 			weekfloat = weekinteger;
 		}
 		
-		wrefresh(calcwindowa);
+		wrefresh(calcwindowa); wrefresh(calcwindowc);
 		choice = wgetch(calcwindowb);
 
 		switch(choice)
@@ -309,7 +277,6 @@ int oneinterest(){
 			default:
 				break;
 		}
-		wrefresh(calcwindowc);				//Deletes the window, see above.
 		if(choice == 10)				//If we press the enter key,
 			break;					//Then exit.
 	}
@@ -331,7 +298,7 @@ int main(){
 
 	//Error Check
 	int yMax,xMax;
-	getmaxyx(stdscr, yMax, xMax);		//Program needs at least 36 y-axis units and 72 x-axis units.
+	getmaxyx(stdscr, yMax, xMax);		//Program needs at least 36 y-axis units and 86 x-axis units.
 	if(yMax < 36 || xMax < 86){		//If window cannot meet those requirements it stops and prints an error code.
 		endwin();
 		printf("\nError!\nError Code:		01\nWindow Dimensions too small!");
@@ -357,7 +324,7 @@ int main(){
 	box(titlewin, 0, 0); box(choicewin, 0, 0); box(infowin, 0, 0);
 	
 	mvwprintw(titlewin, 1, 2, "ACT's Investment-Return Calculator");
-	mvwprintw(titlewin, 2, 15, "Version 2.2");
+	mvwprintw(titlewin, 2, 15, "Version 2.2.1");
 	mvwprintw(choicewin, 1, 2, "1 or 2 investments?");
 	mvwprintw(infowin, 1, 2, "Copyright 2022 ACT");
 	mvwprintw(infowin, 2, 2, "Licensed under the GNU GPL 3.0");
