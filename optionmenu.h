@@ -1,5 +1,5 @@
-#ifndef __OPTIONMENU_H_
-#define __OPTIONEMNU_H
+#ifndef _OPTIONMENU_H
+#define _OPTIONMENU_H
 
 int optionmenu(int color);
 
