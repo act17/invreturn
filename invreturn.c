@@ -1,14 +1,37 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
+#include <pthread.h>
 #include "interest.h"
 #include "optionmenu.h"
+
+void* timedisplay(void * arg){
+	initscr();
+	noecho();
+
+	init_pair(1,COLOR_BLACK,COLOR_WHITE);
+	attron(COLOR_PAIR(1));
+	
+	time_t s;
+	struct tm* currtime;
+	
+	while(1){
+		s = time(NULL);
+		currtime = localtime(&s);
+		mvwprintw(stdscr,33,2,"The time is: %02d:%02d:%02d",currtime->tm_hour,currtime->tm_min,currtime->tm_sec);
+		refresh();
+		sleep(1);
+	}
+
+	return NULL;
+}
 
 int main(){
 	
 	//Options
 	int color = 2;	//Background color. By default, it's set to cyan.
-
+	
 while(1){
 
 	initscr();
@@ -28,12 +51,6 @@ while(1){
 		return 1;
 	}
 
-	//Initializing the super-cool-clock(tm)
-	time_t s, val = 1;
-	struct tm* currtime;
-	s = time(NULL);
-	currtime = localtime(&s);
-
 	//Color Pairs (See 'optionmenu')
 	init_pair(1,COLOR_BLACK,COLOR_WHITE);			//Color-pair 1 (Windows) is a nice combo of Black and White (Grey)
 	init_pair(2,COLOR_CYAN,COLOR_CYAN);			//Color-pair 2 (Background) is Cyan (Default)
@@ -46,7 +63,7 @@ while(1){
 	WINDOW * choicewin = newwin(5,86, 5, 0);
 	WINDOW * infowin = newwin(5,86, 11, 0);
 	WINDOW * extrawin = newwin(5,86, 31, 0);
-
+	
 	wbkgd(stdscr, COLOR_PAIR(color));
 	wattron(titlewin,COLOR_PAIR(1));	wbkgd(titlewin,COLOR_PAIR(1));
 	wattron(choicewin,COLOR_PAIR(1));	wbkgd(choicewin,COLOR_PAIR(1));
@@ -60,17 +77,19 @@ while(1){
 	mvwprintw(infowin,1,2,"Copyright 2022 ACT");
 	mvwprintw(infowin,2,2,"Licensed under the GNU GPL 3.0");
 	mvwprintw(infowin,3,2,"https://github.com/act17/invreturn");
-	mvwprintw(extrawin,1,2,"Version 2.3 - April 28th, 2022");
-	mvwprintw(extrawin,2,2,"The time is: %02d:%02d:%02d",currtime->tm_hour,currtime->tm_min,currtime->tm_sec);
-	mvwprintw(extrawin,3,2,"Press 'x' to Exit, press 'o' for options.");
+	mvwprintw(extrawin,1,2,"Version 2.4 - May 2nd, 2022");
+	mvwprintw(extrawin,3,2,"Press 'x' to exit, press 'o' for options.");
 
 	refresh(); wrefresh(titlewin); wrefresh(choicewin); wrefresh(infowin); wrefresh(extrawin);
 	keypad(choicewin, true);
+
+	//pThread
+	pthread_t timethread;
+	pthread_create(&timethread, NULL, timedisplay, NULL);
 	
 
 	int choice;
 	int highlight = 1;
-
 
 	//Selection Menu
 	while(1){
@@ -104,6 +123,7 @@ while(1){
 		if(choice == 'x'){
 			clear();
 			endwin();
+			pthread_cancel(timethread);
 			return 0;
 		}
 
@@ -111,6 +131,7 @@ while(1){
 			optionflag++;
 			clear();
 			endwin();
+			pthread_cancel(timethread);
 			color = optionmenu(color);
 			break;
 		}
@@ -122,6 +143,7 @@ while(1){
 	//Opening the functions to calculate one or two interests
 	clear();
 	endwin();
+	pthread_cancel(timethread);
 	
 	if(optionflag == 0)		//Execute (Which performs the interest stuff) if options haven't been opened this loop.
 	{
