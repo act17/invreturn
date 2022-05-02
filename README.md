@@ -12,6 +12,16 @@ With Version 2.3, there's additional commands the user can issue to the program 
 Special thanks to users ``b-fuze (Mike32)`` and ``Xen`` on the Ubuntu Hideout Discord server for helping me fix all the bugs, from SegFaults to issues with Pointers. Further thanks to ``DWD (Daniel) - The Danfather``, also from the Ubuntu Hideout server, for assisting with the additions of color to the program.
 
 # Updates
+_Version 2.4_ (May 2nd, 2022)
+- Current time is now displayed and updated every second.
+- Fixed a memory leak in the ``oneinterest()`` and ``twointerest()`` functions.
+- Fixed (?) issue where the year-count window printed zero for every increase in digits. (E.g., going from year 9 to year 10, then back to year 9 would add an extra zero to the end making it appear as 90.)
+- Removed redundant ``initscr()``.
+- Corrected header file issues.
+- Added a new Makefile.
+- Removed a redundant variable.
+Special thanks to user ``rene`` on the Linux Mint forums for showing me these issues.
+
 _Version 2.3_ (April 28th, 2022)
 - Added an options menu.
 - Moved the functions ``oneinterest()`` and ``twointerest()`` to their own seperate files, using one header file titled ``interest.h``.
