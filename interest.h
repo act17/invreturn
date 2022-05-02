@@ -1,5 +1,5 @@
-#ifndef __INTEREST_H_
-#define __INTEREST_H
+#ifndef _INTEREST_H
+#define _INTEREST_H
 
 double oneinterest(int color);
 double twointerest(int color);
