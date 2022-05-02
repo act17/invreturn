@@ -14,13 +14,12 @@ int oneinterest(int color){
 
 	//Calling variables
 	double invest,rate,period,weekfloat;		//Call the important floats,
-	int weekinteger,weekcounter;			//Call the integers for counting weeks,
+	int weekinteger;				//Call the integer for counting weeks.
 	weekinteger = 1;
 	weekfloat = weekinteger;
 	struct investment *inv1 = malloc(sizeof(*inv1)); //Call a struct for the investment as a pointer. (Thanks to Xen)
 
 	//Preparing the Data-Collecting Windows
-	initscr();
 	echo();
 	int yMax,xMax;
 	getmaxyx(stdscr, yMax, xMax);
@@ -107,7 +106,7 @@ int oneinterest(int color){
 			//Year notification system
 			if(weekinteger % 52 == 0){				//If our Week # is a multiple of 52...
 				yearcount = weekfloat / 52;			//We define our Year #.
-				mvwprintw(calcwindowc,1,7,"%d",yearcount);	//Print the new Year #, then we tell
+				mvwprintw(calcwindowc,1,7,"%d  ",yearcount);	//Print the new Year #, then we tell
 				wattron(calcwindowa,A_REVERSE);			//calcwindowa to print the next calc
 				wrefresh(calcwindowc);				//with the A_REVERSE attr.
 			}
@@ -139,6 +138,7 @@ int oneinterest(int color){
 		if(choice == 10)				//If we press the enter key,
 			break;					//Then exit.
 	}
+	free(inv1);
 	clear();
 	endwin();						//And terminate the program.
 	return 0;
