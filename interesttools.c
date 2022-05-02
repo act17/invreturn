@@ -3,9 +3,6 @@
 
 double interestcalc(double investment, double rate, double period, double week)
 {
-	double returns;
-	week = week/period;
-	returns = pow(rate,week);
-	returns = returns*investment;
-	return returns;
+	return investment * pow(rate, week / period);	//Thanks to 'rene' on the Linux Mint Forums for providing this simplified
+							//function.
 }
