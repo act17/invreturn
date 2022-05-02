@@ -4,10 +4,8 @@
 int optionmenu(int color)
 {
 	//Initializing
-	initscr();
-	cbreak();
 	noecho();
-	start_color;
+	start_color();
 
 	//Color-Pairs
 	init_pair(1,COLOR_BLACK,COLOR_WHITE);
