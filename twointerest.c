@@ -14,14 +14,13 @@ int twointerest(int color){
 
 	
 	double invest,rate,period,weekfloat;
-	int weekinteger,weekcounter;
+	int weekinteger;
 	weekinteger = 1;
 	weekfloat = weekinteger;
 	struct investment *inv1 = malloc(sizeof(*inv1));
 	struct investment *inv2 = malloc(sizeof(*inv2));
 
 	
-	initscr();
 	echo();
 	int yMax,xMax;
 	getmaxyx(stdscr, yMax, xMax);
@@ -109,7 +108,7 @@ int twointerest(int color){
 
 			if(weekinteger % 52 == 0){
 				yearcount = weekfloat / 52;
-				mvwprintw(calcwindowc,1,7,"%d",yearcount);
+				mvwprintw(calcwindowc,1,7,"%d  ",yearcount);
 				wattron(calcwindowa,A_REVERSE);
 				wrefresh(calcwindowc);
 			}
@@ -142,7 +141,8 @@ int twointerest(int color){
 		if(choice == 10)
 			break;
 	}
-
+	free(inv1);
+	free(inv2);
 	clear();
 	endwin();
 	return 0;
