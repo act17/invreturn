@@ -71,26 +71,35 @@ int twointerest(int color){
 	refresh();
 
 	WINDOW * calcwindowa = newwin(36,72,0,14);
-	WINDOW * calcwindowb = newwin(6,14,0,0);
-	WINDOW * calcwindowc = newwin(3,14,6,0);
-
+	WINDOW * calcwindowb = newwin(10,14,0,0);
+	WINDOW * calcwindowc = newwin(3,14,10,0);
+	WINDOW * calcwindowd = newwin(4,14,13,0);
 	wattron(calcwindowa,COLOR_PAIR(1)); wbkgd(calcwindowa,COLOR_PAIR(1));
 	wattron(calcwindowb,COLOR_PAIR(1)); wbkgd(calcwindowb,COLOR_PAIR(1));
 	wattron(calcwindowc,COLOR_PAIR(1)); wbkgd(calcwindowc,COLOR_PAIR(1));
-	box(calcwindowa,0,0); box(calcwindowb,0,0); box(calcwindowc,0,0);
+	wattron(calcwindowd,COLOR_PAIR(1)); wbkgd(calcwindowd,COLOR_PAIR(1));	
+	box(calcwindowa,0,0); box(calcwindowb,0,0);
+	box(calcwindowc,0,0); box(calcwindowd,0,0);
 
 	keypad(calcwindowb,true);
 
 	int currentpage = 1; 
 	int choice = 0;
 	int yearcount;
-
-	mvwprintw(calcwindowb,1,2,"Use the UP");
-	mvwprintw(calcwindowb,2,2,"and DOWN");
-	mvwprintw(calcwindowb,3,2,"arrow keys");
-	mvwprintw(calcwindowb,4,2,"to scroll");
+	int specialweek = 0;
+	double findweek = 0;
+	
+	mvwprintw(calcwindowb,1,2,"UP + DOWN");
+	mvwprintw(calcwindowb,2,2,"Scroll");
+	mvwprintw(calcwindowb,4,2,"RETURN");
+	mvwprintw(calcwindowb,5,2,"Exits");
+	mvwprintw(calcwindowb,7,2,"G");
+	mvwprintw(calcwindowb,8,2,"Goto");
 	mvwprintw(calcwindowc,1,1,"Year: 1");
-	wrefresh(calcwindowa); wrefresh(calcwindowb); wrefresh(calcwindowc);
+	mvwprintw(calcwindowd,1,1,"Goto Week:");
+	
+	wrefresh(calcwindowa); wrefresh(calcwindowb);
+	wrefresh(calcwindowc); wrefresh(calcwindowd);
 
 	while(1){
 
@@ -113,6 +122,10 @@ int twointerest(int color){
 				wrefresh(calcwindowc);
 			}
 
+			if(weekinteger == specialweek){
+				wattron(calcwindowa,A_REVERSE);
+				specialweek = 0;
+			}
 
 			inv1->returns = interestcalc(inv1->invest,inv1->rate,inv1->period,weekfloat);
 			inv2->returns = interestcalc(inv2->invest,inv2->rate,inv2->period,weekfloat);
@@ -138,6 +151,17 @@ int twointerest(int color){
 			default:
 				break;
 		}
+
+		if(choice == 'g'){
+			wrefresh(calcwindowd);
+			echo();
+			mvwscanw(calcwindowd,2,1,"%d",&specialweek);
+			currentpage = weekfind(specialweek);
+			wrefresh(calcwindowd);
+			mvwprintw(calcwindowd,2,1,"           ");
+			noecho();
+		}
+
 		if(choice == 10)
 			break;
 	}
