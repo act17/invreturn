@@ -19,7 +19,7 @@ void* timedisplay(void * arg){
 	while(1){
 		s = time(NULL);
 		currtime = localtime(&s);
-		mvwprintw(stdscr,33,2,"The time is: %02d:%02d:%02d",currtime->tm_hour,currtime->tm_min,currtime->tm_sec);
+		mvwprintw(stdscr,16,2,"The time is: %02d:%02d:%02d",currtime->tm_hour,currtime->tm_min,currtime->tm_sec);
 		refresh();
 		sleep(1);
 	}
@@ -59,10 +59,10 @@ while(1){
 
 
 	//Initializing the screen.
-	WINDOW * titlewin = newwin(4,86, 0, 0);
-	WINDOW * choicewin = newwin(5,86, 5, 0);
-	WINDOW * infowin = newwin(5,86, 11, 0);
-	WINDOW * extrawin = newwin(5,86, 31, 0);
+	WINDOW * titlewin = newwin(4,86,0,0);
+	WINDOW * choicewin = newwin(5,86,4,0);
+	WINDOW * infowin = newwin(5,86,9,0);
+	WINDOW * extrawin = newwin(5,86,14,0);
 	
 	wbkgd(stdscr, COLOR_PAIR(color));
 	wattron(titlewin,COLOR_PAIR(1));	wbkgd(titlewin,COLOR_PAIR(1));
@@ -77,7 +77,7 @@ while(1){
 	mvwprintw(infowin,1,2,"Copyright 2022 ACT");
 	mvwprintw(infowin,2,2,"Licensed under the GNU GPL 3.0");
 	mvwprintw(infowin,3,2,"https://github.com/act17/invreturn");
-	mvwprintw(extrawin,1,2,"Version 2.4 - May 2nd, 2022");
+	mvwprintw(extrawin,1,2,"Version 2.5 - May 7th, 2022");
 	mvwprintw(extrawin,3,2,"Press 'x' to exit, press 'o' for options.");
 
 	refresh(); wrefresh(titlewin); wrefresh(choicewin); wrefresh(infowin); wrefresh(extrawin);
