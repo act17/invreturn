@@ -66,28 +66,45 @@ int oneinterest(int color){
 
 
 	//Preparing the Table of Values
-	WINDOW * calcwindowa = newwin(36,72,0,14);
-	WINDOW * calcwindowb = newwin(6,14,0,0);
-	WINDOW * calcwindowc = newwin(3,14,6,0);
+	WINDOW * calcwindowa = newwin(36,72,0,14);	//Displays values.
+	WINDOW * calcwindowb = newwin(13,14,0,0);	//Displays controls.
+	WINDOW * calcwindowc = newwin(3,14,13,0);	//Displays years.
+	WINDOW * calcwindowd = newwin(4,14,16,0);	//Displays goto.
+	WINDOW * calcwindowe = newwin(6,14,20,0);	//Displays find.
 	
 	wattron(calcwindowa,COLOR_PAIR(1)); wbkgd(calcwindowa,COLOR_PAIR(1));
 	wattron(calcwindowb,COLOR_PAIR(1)); wbkgd(calcwindowb,COLOR_PAIR(1));
 	wattron(calcwindowc,COLOR_PAIR(1)); wbkgd(calcwindowc,COLOR_PAIR(1));
-	box(calcwindowa,0,0); box(calcwindowb,0,0); box(calcwindowc,0,0);						
+	wattron(calcwindowd,COLOR_PAIR(1)); wbkgd(calcwindowd,COLOR_PAIR(1));
+	wattron(calcwindowe,COLOR_PAIR(1)); wbkgd(calcwindowe,COLOR_PAIR(1));
+	box(calcwindowa,0,0); box(calcwindowb,0,0); box(calcwindowc,0,0);
+	box(calcwindowd,0,0); box(calcwindowe,0,0);
 	keypad(calcwindowb,true);
 
 	//Page System Initialization
 	int currentpage = 1;			//The current page. 
 	int choice = 0;				//Used to select pages.
 	int yearcount = 1;
+	int specialweek = 0;
+	double findweek = 0;
 
 	//Getting our windows ready
-	mvwprintw(calcwindowb,1,2,"Use the UP");
-	mvwprintw(calcwindowb,2,2,"and DOWN");
-	mvwprintw(calcwindowb,3,2,"arrow keys");
-	mvwprintw(calcwindowb,4,2,"to scroll");
+	mvwprintw(calcwindowb,1,2,"UP + DOWN");
+	mvwprintw(calcwindowb,2,2,"Scroll");
+	mvwprintw(calcwindowb,4,2,"RETURN");
+	mvwprintw(calcwindowb,5,2,"Exits");
+	mvwprintw(calcwindowb,7,2,"F");
+	mvwprintw(calcwindowb,8,2,"Find");
+	mvwprintw(calcwindowb,10,2,"G");
+	mvwprintw(calcwindowb,11,2,"Goto");
 	mvwprintw(calcwindowc,1,1,"Year: 1");
-	wrefresh(calcwindowa); wrefresh(calcwindowb); wrefresh(calcwindowc);
+	mvwprintw(calcwindowd,1,1,"Goto Week:");
+	mvwprintw(calcwindowe,1,1,"Find Week:");
+	mvwprintw(calcwindowe,2,1,"$");
+	mvwprintw(calcwindowe,3,1,"Week:");
+	wrefresh(calcwindowa); wrefresh(calcwindowb);
+	wrefresh(calcwindowc); wrefresh(calcwindowd);
+	wrefresh(calcwindowe);
 
 	//Calculation Loop
 	while(1){
@@ -111,6 +128,11 @@ int oneinterest(int color){
 				wrefresh(calcwindowc);				//with the A_REVERSE attr.
 			}
 
+			//Week highlight system
+			if(weekinteger == specialweek){			//If our week is the 'special week',
+				wattron(calcwindowa,A_REVERSE);		//Print with 'A_REVERSE',
+				specialweek = 0;			//And make our special week 0.
+			}
 
 			inv1->returns = interestcalc(inv1->invest,inv1->rate,inv1->period,weekfloat);
 			mvwprintw(calcwindowa,weekshift+2,1,"Week %d:		%lf",weekinteger,inv1->returns);
@@ -135,8 +157,33 @@ int oneinterest(int color){
 			default:
 				break;
 		}
+
 		if(choice == 10)				//If we press the enter key,
 			break;					//Then exit.
+
+		if(choice == 'g'){					//Developed after the 'find week' feature.
+			wrefresh(calcwindowd);				//See below for details.
+			echo();
+			mvwscanw(calcwindowd,2,1,"%d",&specialweek);
+			currentpage = weekfind(specialweek);
+			wrefresh(calcwindowd);
+			mvwprintw(calcwindowd,2,1,"            ");
+			noecho();
+		}
+
+		if(choice == 'f'){					//If we press the 'f' key,
+			wrefresh(calcwindowe);				//Used to clear the input/output from last use.
+			echo();						//Turn on echo so the user can see input,
+			mvwscanw(calcwindowe,2,2,"%lf",&findweek);	//Take the user's input.
+			findweek = interestfind(findweek,inv1->invest,inv1->rate,inv1->period);
+			mvwprintw(calcwindowe,4,1,"%lf",findweek);	//Display the 'x' value to get the benchmark.
+			specialweek = findweek;				//Make our 'specialweek' equal to that 'x' value.
+			currentpage = weekfind(findweek);		//Define the current page using weekfind.
+			wrefresh(calcwindowe);				//Refresh window and restart with new currentpage.
+			mvwprintw(calcwindowe,2,2,"           ");	//Clears input and output.
+			mvwprintw(calcwindowe,4,1,"            ");
+			noecho();
+		}
 	}
 	free(inv1);
 	clear();
