@@ -12,6 +12,12 @@ With Version 2.3, there's additional commands the user can issue to the program 
 Special thanks to users ``b-fuze (Mike32)`` and ``Xen`` on the Ubuntu Hideout Discord server for helping me fix all the bugs, from SegFaults to issues with Pointers. Further thanks to ``DWD (Daniel) - The Danfather``, also from the Ubuntu Hideout server, for assisting with the additions of color to the program.
 
 # Updates
+_Version 2.5_ (May 7th, 2022)
+- Added 'goto week' feature, available on both 1 and 2 interests. Will set the current page to be able to see a week of the user's choice, and will highlight it with ``A_REVERSE``.
+- Added 'find week' feature only for 1 interest (for now). It finds the specific week that produces the amount of returns that the user specifies, and performs the same general tasks that the 'goto week' feature performs.
+- Added two new functions to ``interesttools.c``: ``interestfind()`` and ``weekfind()``. ``interestfind()`` converts the formula for the investment, plus the amount of returns given, into an equivalent logarithmic equation and returns the value given. ``weekfind()`` simply just performs a loop to see what multiple of 33 the given week falls into.
+- Compacted the main menu for aesthetics.
+
 _Version 2.4_ (May 2nd, 2022)
 - Current time is now displayed and updated every second.
 - Fixed a memory leak in the ``oneinterest()`` and ``twointerest()`` functions.
