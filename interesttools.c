@@ -14,6 +14,10 @@ double interestfind(double benchmark, double investment, double rate, double per
 
 int weekfind(double week){
 	int weekcount = 1;
+	
+	if(week < 34)
+		return 1;
+
 	while(1){
 		int weekcheck = week - (33 * weekcount);
 		if(weekcheck < 34)
