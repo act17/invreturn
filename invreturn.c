@@ -77,7 +77,7 @@ while(1){
 	mvwprintw(infowin,1,2,"Copyright 2022 ACT");
 	mvwprintw(infowin,2,2,"Licensed under the GNU GPL 3.0");
 	mvwprintw(infowin,3,2,"https://github.com/act17/invreturn");
-	mvwprintw(extrawin,1,2,"Version 2.5 - May 7th, 2022");
+	mvwprintw(extrawin,1,2,"Version 2.6 - May 9th, 2022");
 	mvwprintw(extrawin,3,2,"Press 'x' to exit, press 'o' for options.");
 
 	refresh(); wrefresh(titlewin); wrefresh(choicewin); wrefresh(infowin); wrefresh(extrawin);
