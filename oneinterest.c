@@ -93,15 +93,19 @@ int oneinterest(int color){
 	mvwprintw(calcwindowb,2,2,"Scroll");
 	mvwprintw(calcwindowb,4,2,"RETURN");
 	mvwprintw(calcwindowb,5,2,"Exits");
-	mvwprintw(calcwindowb,7,2,"F");
-	mvwprintw(calcwindowb,8,2,"Find");
-	mvwprintw(calcwindowb,10,2,"G");
-	mvwprintw(calcwindowb,11,2,"Goto");
-	mvwprintw(calcwindowc,1,1,"Year: 1");
+	mvwprintw(calcwindowb,7,2,"G");
+	mvwprintw(calcwindowb,8,2,"Goto");
+	mvwprintw(calcwindowb,10,2,"F");
+	mvwprintw(calcwindowb,11,2,"Find");
+	
+	mvwprintw(calcwindowc,1,1,"Year:");
+	
 	mvwprintw(calcwindowd,1,1,"Goto Week:");
+	
 	mvwprintw(calcwindowe,1,1,"Find Week:");
 	mvwprintw(calcwindowe,2,1,"$");
 	mvwprintw(calcwindowe,3,1,"Week:");
+	
 	wrefresh(calcwindowa); wrefresh(calcwindowb);
 	wrefresh(calcwindowc); wrefresh(calcwindowd);
 	wrefresh(calcwindowe);
@@ -118,8 +122,12 @@ int oneinterest(int color){
 
 		for(int pageinteger = 33 * currentpage; pageinteger != 0 + (33 * (currentpage - 1)); pageinteger--)
 		{
-
-
+			if(weekinteger < 52){	//Added because the goto/find features skip the natural decrement process.
+				yearcount = 0;	
+				mvwprintw(calcwindowc,1,7,"%d  ",yearcount);
+				wrefresh(calcwindowc);
+			}
+			
 			//Year notification system
 			if(weekinteger % 52 == 0){				//If our Week # is a multiple of 52...
 				yearcount = weekfloat / 52;			//We define our Year #.
@@ -137,7 +145,7 @@ int oneinterest(int color){
 			inv1->returns = interestcalc(inv1->invest,inv1->rate,inv1->period,weekfloat);
 			mvwprintw(calcwindowa,weekshift+2,1,"Week %d:		%lf",weekinteger,inv1->returns);
 			wattroff(calcwindowa,A_REVERSE);
-			weekinteger++; weekshift++;;
+			weekinteger++; weekshift++;
 			weekfloat = weekinteger;
 		}
 		
@@ -187,6 +195,6 @@ int oneinterest(int color){
 	}
 	free(inv1);
 	clear();
-	endwin();						//And terminate the program.
+	endwin();
 	return 0;
 }
