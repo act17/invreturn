@@ -12,6 +12,12 @@ With Version 2.3, there's additional commands the user can issue to the program 
 Special thanks to users ``b-fuze (Mike32)`` and ``Xen`` on the Ubuntu Hideout Discord server for helping me fix all the bugs, from SegFaults to issues with Pointers. Further thanks to ``DWD (Daniel) - The Danfather``, also from the Ubuntu Hideout server, for assisting with the additions of color to the program.
 
 # Updates
+_Version 2.6_ (May 9th, 2022)
+- 'Find week' feature now applies to two interests.
+- Corrected a few issues here-and-there to the placement of text within the onscreen windows.
+- Added a long-absent feature wherein you couldn't exit ``twointerest()``.
+- Fixed a bug relating to ``weekfind()`` not cooperating with values less than 34.
+
 _Version 2.5_ (May 7th, 2022)
 - Added 'goto week' feature, available on both 1 and 2 interests. Will set the current page to be able to see a week of the user's choice, and will highlight it with ``A_REVERSE``.
 - Added 'find week' feature only for 1 interest (for now). It finds the specific week that produces the amount of returns that the user specifies, and performs the same general tasks that the 'goto week' feature performs.
