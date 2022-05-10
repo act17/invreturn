@@ -71,35 +71,52 @@ int twointerest(int color){
 	refresh();
 
 	WINDOW * calcwindowa = newwin(36,72,0,14);
-	WINDOW * calcwindowb = newwin(10,14,0,0);
-	WINDOW * calcwindowc = newwin(3,14,10,0);
-	WINDOW * calcwindowd = newwin(4,14,13,0);
+	WINDOW * calcwindowb = newwin(13,14,0,0);
+	WINDOW * calcwindowc = newwin(3,14,13,0);
+	WINDOW * calcwindowd = newwin(4,14,16,0);
+	WINDOW * calcwindowe = newwin(7,14,20,0);
 	wattron(calcwindowa,COLOR_PAIR(1)); wbkgd(calcwindowa,COLOR_PAIR(1));
 	wattron(calcwindowb,COLOR_PAIR(1)); wbkgd(calcwindowb,COLOR_PAIR(1));
 	wattron(calcwindowc,COLOR_PAIR(1)); wbkgd(calcwindowc,COLOR_PAIR(1));
 	wattron(calcwindowd,COLOR_PAIR(1)); wbkgd(calcwindowd,COLOR_PAIR(1));	
+	wattron(calcwindowe,COLOR_PAIR(1)); wbkgd(calcwindowe,COLOR_PAIR(1));
 	box(calcwindowa,0,0); box(calcwindowb,0,0);
 	box(calcwindowc,0,0); box(calcwindowd,0,0);
+	box(calcwindowe,0,0);
 
 	keypad(calcwindowb,true);
+	keypad(calcwindowe,true);
 
 	int currentpage = 1; 
 	int choice = 0;
 	int yearcount;
 	int specialweek = 0;
-	double findweek = 0;
-	
+	int findinvest = 1;
+	int findinput;
+	int foundinput = 1;
+	double findweek,foundweek;
+
 	mvwprintw(calcwindowb,1,2,"UP + DOWN");
 	mvwprintw(calcwindowb,2,2,"Scroll");
 	mvwprintw(calcwindowb,4,2,"RETURN");
 	mvwprintw(calcwindowb,5,2,"Exits");
 	mvwprintw(calcwindowb,7,2,"G");
 	mvwprintw(calcwindowb,8,2,"Goto");
-	mvwprintw(calcwindowc,1,1,"Year: 1");
+	mvwprintw(calcwindowb,10,2,"F");
+	mvwprintw(calcwindowb,11,2,"Find");
+	
+	mvwprintw(calcwindowc,1,1,"Year:");
+	
 	mvwprintw(calcwindowd,1,1,"Goto Week:");
 	
+	mvwprintw(calcwindowe,1,1,"Find Week:");
+	mvwprintw(calcwindowe,2,1,"$");
+	mvwprintw(calcwindowe,3,1,"Inv.: 1");
+	mvwprintw(calcwindowe,4,1,"Week:");	
+
 	wrefresh(calcwindowa); wrefresh(calcwindowb);
 	wrefresh(calcwindowc); wrefresh(calcwindowd);
+	wrefresh(calcwindowe);
 
 	while(1){
 
@@ -114,7 +131,11 @@ int twointerest(int color){
 		for(int pageinteger = 33 * currentpage; pageinteger != 0 + (33 * (currentpage - 1)); pageinteger--)
 		{
 
-
+			if(weekinteger < 52){
+				yearcount = 0;
+				mvwprintw(calcwindowc,1,7,"%d  ",yearcount);
+				wrefresh(calcwindowc);
+			}
 			if(weekinteger % 52 == 0){
 				yearcount = weekfloat / 52;
 				mvwprintw(calcwindowc,1,7,"%d  ",yearcount);
@@ -152,6 +173,9 @@ int twointerest(int color){
 				break;
 		}
 
+		if(choice == 10)
+			break;
+
 		if(choice == 'g'){
 			wrefresh(calcwindowd);
 			echo();
@@ -162,9 +186,44 @@ int twointerest(int color){
 			noecho();
 		}
 
-		if(choice == 10)
-			break;
-	}
+		if(choice == 'f'){
+			wrefresh(calcwindowe);
+			echo();
+			mvwscanw(calcwindowe,2,2,"%lf",&findweek);
+			noecho();
+			
+			while(1){
+			mvwprintw(calcwindowe,3,7,"%d",foundinput);
+			findinput = wgetch(calcwindowe);
+			switch(findinput){
+
+				case KEY_UP:
+					foundinput = 1;
+					break;
+				case KEY_DOWN:				
+					foundinput = 2;	
+					break;
+				default:
+					break;
+				}
+
+				if(findinput == 10)
+					break;
+			}
+
+			if(foundinput == 1)
+				foundweek = interestfind(findweek,inv1->invest,inv1->rate,inv1->period);
+			if(foundinput == 2)				
+				foundweek = interestfind(findweek,inv2->invest,inv2->rate,inv2->period);
+			mvwprintw(calcwindowe,5,1,"%lf",foundweek);
+			specialweek = foundweek;
+			currentpage = weekfind(foundweek);
+			wrefresh(calcwindowe);
+			mvwprintw(calcwindowe,2,2,"           ");
+			mvwprintw(calcwindowe,5,1,"            ");
+			noecho();
+			}	
+		}
 	free(inv1);
 	free(inv2);
 	clear();
