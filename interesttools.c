@@ -27,3 +27,9 @@ int weekfind(double week){
 	}
 	return weekcount + 1;
 }
+
+double ratefind(double y, double a, double x, double z){	//Benchmark, investment, timeframe, period.
+	y = y/a;	//We first divide our benchmark by our investment,
+	x = x/z;	//Then we divide our week/timeframe by our period,
+	return pow(y,x);//Now return the power of.
+}
