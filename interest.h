@@ -1,7 +1,8 @@
 #ifndef _INTEREST_H
 #define _INTEREST_H
 
-double oneinterest(int color);
-double twointerest(int color);
+void oneinterest(int color);
+void twointerest(int color);
+void ratefinder(int color);
 
 #endif
