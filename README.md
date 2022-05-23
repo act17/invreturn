@@ -12,6 +12,10 @@ With Version 2.3, there's additional commands the user can issue to the program 
 Special thanks to users ``b-fuze (Mike32)`` and ``Xen`` on the Ubuntu Hideout Discord server for helping me fix all the bugs, from SegFaults to issues with Pointers. Further thanks to ``DWD (Daniel) - The Danfather``, also from the Ubuntu Hideout server, for assisting with the additions of color to the program.
 
 # Updates
+_Version 2.7_ (May 23rd, 2022)
+- Added 'Find Rate' feature.
+- Added function ``ratefind()``, which acts like macro to algebraically solve the rate for an investment.
+
 _Version 2.6_ (May 9th, 2022)
 - 'Find week' feature now applies to two interests.
 - Corrected a few issues here-and-there to the placement of text within the onscreen windows.
