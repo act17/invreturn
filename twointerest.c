@@ -10,7 +10,7 @@ struct investment{	//The investment struct
 	double returns;
 };
 
-int twointerest(int color){
+void twointerest(int color){
 
 	
 	double invest,rate,period,weekfloat;
